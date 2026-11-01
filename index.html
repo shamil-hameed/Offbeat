@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offfbeat - Free Travel Routes & Itineraries</title>
+    <!-- Google Fonts for Clean Typography -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="family">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Leaflet Maps CSS Engine -->
+<link rel="stylesheet" href="https://unpkg.com" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<!-- Leaflet Maps JavaScript Engine -->
+<script src="https://unpkg.com" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+</head>
+<body>
+
+    <!-- GLOBAL NAVBAR -->
+    <header class="navbar">
+        <div class="logo-area" onclick="switchPage('home')">
+            <span class="logo-icon">▲</span> OFFFBEAT
+        </div>
+        <nav class="nav-links">
+            <a href="#" onclick="switchPage('home')">Home</a>
+            <a href="#" onclick="switchPage('explore')">Explore</a>
+            <a href="#" onclick="switchPage('admin-portal')" id="nav-admin-link" style="display:none;">Admin Portal</a>
+            <button class="btn-login" id="login-trigger-btn" onclick="openLoginModal()">Login</button>
+            <span class="user-badge" id="admin-badge" style="display:none;">Admin Access</span>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTAINER FOR DYNAMIC VIEWS -->
+    <main id="app-container">
+
+        <!-- A. HOMEPAGE VIEW -->
+        <section id="view-home" class="page-view active">
+            <div class="hero-section">
+                <h1>OFFFBEAT</h1>
+                <p class="hero-desc">Discover hidden travel paths, unique destinations, and curate your own adventures. Escape the crowd and explore the road less traveled.</p>
+                <div class="search-bar-wrapper">
+                    <input type="text" placeholder="Where do you want to go?">
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="curved-card yellow-accent" onclick="switchPage('explore')">
+                    <h2>EXPLORE PLACES</h2>
+                    <p>Find hidden gems and unique itineraries curated by travel experts completely for free.</p>
+                    <button class="card-btn black">Start Exploring</button>
+                </div>
+                <div class="curved-card" onclick="openContributionAlert()">
+                    <h2>CONTRIBUTE YOUR PATH</h2>
+                    <p>Share your own offbeat adventures. Earn badges, community recognition, and dashboard spots.</p>
+                    <button class="card-btn yellow">Submit Itinerary</button>
+                </div>
+                <div class="curved-card" onclick="switchPage('compare')">
+                    <h2>COMPARE ITINERARIES</h2>
+                    <p>Compare our standard base routes with user submissions and your custom creations side-by-side.</p>
+                    <button class="card-btn black">Launch Comparison Tool</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- B. ITINERARY LISTING VIEW -->
+        <section id="view-explore" class="page-view">
+            <h2 class="section-title">Explore Popular Itineraries</h2>
+            <div class="explore-layout">
+                <div class="itinerary-list" id="explore-cards-target">
+                    <!-- Cards will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+      <!-- C. ITINERARY DETAIL & EXPLAINED TIMELINE VIEW WITH MAP -->
+<section id="view-detail" class="page-view">
+    <button class="back-btn" onclick="switchPage('explore')">← Back to Itineraries</button>
+    <h2 id="detail-title" class="itinerary-main-title">Selected Route Title</h2>
+    
+    <div class="detail-workspace" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <!-- Timeline column -->
+        <div class="timeline-column">
+            <h3>Route Flow & Timeline</h3>
+            <div class="vertical-timeline" id="timeline-target">
+                <!-- Dynamic dotted timeline goes here -->
+            </div>
+        </div>
+        
+        <!-- Live Map Column -->
+        <div class="map-column" style="position: sticky; top: 100px; height: 500px;">
+            <h3>Interactive Route Map</h3>
+            <div id="map" style="width: 100%; height: 100%; border: 2px solid #000000; border-radius: 12px; margin-top: 20px;"></div>
+        </div>
+    </div>
+</section>
+
+
+        <!-- D. COMPARE & CUSTOMIZE DASHBOARD -->
+        <section id="view-compare" class="page-view">
+            <h2 class="section-title">Compare & Customize Canvas</h2>
+            <div class="comparison-bar">
+                <div class="metric-pill">Base Price: <strong>$450</strong></div>
+                <div class="metric-pill yellow">Your Custom Price: <strong id="custom-price-tag">$450</strong></div>
+                <div class="metric-pill">Variance: <strong id="variance-tag">$0</strong></div>
+            </div>
+            <div class="split-canvas">
+                <div class="canvas-panel standard">
+                    <h3>Base Itinerary Template (Locked)</h3>
+                    <div class="canvas-item">Stop 1: Arashiyama Bamboo Grove</div>
+                    <div class="canvas-item">Stop 2: Otagi Nenbutsu-ji</div>
+                    <div class="canvas-item">Stop 3: Kinkaku-ji</div>
+                </div>
+                <div class="canvas-panel custom-edit">
+                    <h3>Your Custom Modifications</h3>
+                    <div id="custom-sortable-list">
+                        <div class="canvas-item editable-node" id="node-1">
+                            Stop 1: Arashiyama Bamboo Grove 
+                            <button class="remove-node-btn" onclick="removeStop('node-1', 120)">✕ Delete</button>
+                        </div>
+                        <div class="canvas-item editable-node" id="node-2">
+                            Stop 2: Otagi Nenbutsu-ji
+                            <button class="remove-node-btn" onclick="removeStop('node-2', 80)">✕ Delete</button>
+                        </div>
+                    </div>
+                    <button class="action-btn-accent" onclick="resetComparison()">Reset Custom Canvas</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- E. REDESIGNED ADMIN DASHBOARD HUB -->
+        <section id="view-admin-portal" class="page-view">
+            <h2 class="section-title">Admin Management Workspace</h2>
+            <div class="grid-container">
+                <div class="curved-card" onclick="alert('Redirecting to: Add/Edit Places Workspace Screen')">
+                    <div class="card-icon">📍</div>
+                    <h3>MY CREATIONS</h3>
+                    <p>View, manage, and edit itineraries you have personally introduced into the system.</p>
+                </div>
+                <div class="curved-card yellow-accent" onclick="switchPage('admin-queue')">
+                    <div class="card-icon">📥</div>
+                    <h3>USER CONTRIBUTIONS</h3>
+                    <p>Review path submissions filed by community members. Approve or deny pending items.</p>
+                </div>
+                <div class="curved-card" onclick="alert('Redirecting to Hotel Matrix Management Configuration')">
+                    <div class="card-icon">🏨</div>
+                    <h3>HOTEL DATABASE</h3>
+                    <p>Configure pricing tables and parameters for low, mid-range, and luxury stay assets.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- F. ADMIN USER CONTRIBUTION SUBMISSION QUEUE -->
+        <section id="view-admin-queue" class="page-view">
+            <button class="back-btn" onclick="switchPage('admin-portal')">← Back to Dashboard Hub</button>
+            <h2 class="section-title">Pending User Submissions for Review</h2>
+            <div class="table-wrapper">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Submission Date</th>
+                            <th>User Profile</th>
+                            <th>Itinerary Title</th>
+                            <th>Region Target</th>
+                            <th>Status Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queue-table-body">
+                        <!-- Filled dynamically with approve/reject handlers -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- LOGIN MODAL DIALOGUE WINDOW -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-card">
+            <h3>Admin Portal Authentication</h3>
+            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Use hardcoded credentials: <strong>admin@gmail.com</strong> / <strong>adminpassword123</strong></p>
+            <div class="input-group">
+                <label>Gmail Address</label>
+                <input type="email" id="login-email" placeholder="name@example.com">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="••••••••">
+            </div>
+            <div id="login-error-msg" class="error-text"></div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeLoginModal()">Cancel</button>
+                <button class="btn-submit" onclick="attemptLogin()">Log In</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
