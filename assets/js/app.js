@@ -1,9 +1,4 @@
-/* =====================================================================
-   OFFFBEAT ROUTING ENGINE & MOCK DATA MANAGEMENT INTERACTION LOGIC
-   ===================================================================== */
-
 // 1. DATA STATE ARCHITECTURE
-// Add absolute geographic coordinates to your sample data array elements
 const SAMPLE_ITINERARIES = [
     {
         id: 1,
@@ -29,15 +24,13 @@ const SAMPLE_ITINERARIES = [
     }
 ];
 
-// Global Leaflet instance map variable placeholder tracking
-let webMapInstance = null;
-
 let pendingSubmissions = [
     { id: 101, date: "20/12/2026 12:21", user: "John Doe", title: "Hidden Corners of Paris", region: "France" },
     { id: 102, date: "21/12/2026 09:15", user: "Aalora Balitono", title: "Kerala Backwater Homestays", region: "India" }
 ];
 
 let isAdminLoggedIn = false;
+let webMapInstance = null;
 
 // 2. RUNTIME INITIALIZATION
 document.addEventListener("DOMContentLoaded", () => {
@@ -47,12 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 3. ROUTER / PAGE VIEW CONTROLLER FUNCTION
 function switchPage(pageId) {
-    // Hide all view elements
     document.querySelectorAll('.page-view').forEach(view => {
         view.classList.remove('active');
     });
     
-    // Activate target element view template
     const targetView = document.getElementById(`view-${pageId}`);
     if (targetView) {
         targetView.classList.add('active');
@@ -119,57 +110,45 @@ function loadItineraryDetails(id) {
         `;
     });
 
-        // [Keep all existing code inside loadItineraryDetails right above this line]
-    
-    // Switch to page details view so container dimensions exist in the browser DOM
     switchPage('detail');
 
-    // INITIALIZE / RE-RENDER LEAFLET DYNAMIC MAP DRAW PATH
+    // Trigger Leaflet Map Render
     setTimeout(() => {
-        // Destroy prior maps layer instance state if loading new itineraries
         if (webMapInstance !== null) {
             webMapInstance.remove();
         }
 
-        // Initialize Map view window focused target matching the first location row coordinate parameters
-        const mapCenterLoc = [iti.days[0].stops[0].lat, iti.days[0].stops[0].lng];
+        const firstStop = iti.days[0].stops[0];
+        const mapCenterLoc = [firstStop.lat, firstStop.lng];
         webMapInstance = L.map('map').setView(mapCenterLoc, 13);
 
-        // Load Offfbeat Travel Yellow map tile style configurations from OpenStreetMap assets links
         L.tileLayer('https://{s}://{z}/{x}/{y}{r}.png', {
             attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
         }).addTo(webMapInstance);
 
-        // Collect coordinate pairs to snap a routing timeline line log trace
         let pathLineCoordinates = [];
 
-        // Plot pins/markers for each stop
         iti.days.forEach(day => {
             day.stops.forEach(stop => {
                 const stopPoint = [stop.lat, stop.lng];
                 pathLineCoordinates.push(stopPoint);
 
-                // Add point parameters pins with text data logs inside tooltips click bounds
                 L.marker(stopPoint)
                     .addTo(webMapInstance)
                     .bindPopup(`<strong>${stop.name}</strong><br>Fee: ${stop.cost}`);
             });
         });
 
-        // Draw a solid dark path line connecting the stops sequentially
         if (pathLineCoordinates.length > 1) {
             L.polyline(pathLineCoordinates, {
                 color: '#000000',
                 weight: 4,
-                dashArray: '5, 10' // Match the signature dotted itinerary timeline styling
+                dashArray: '5, 10'
             }).addTo(webMapInstance);
             
-            // Adjust map view bounds dynamically to fit all route stops
             webMapInstance.fitBounds(pathLineCoordinates);
         }
-    }, 100); // Tiny pause interval loop guarantees map container renders clean sizes bounds
-}
-
+    }, 100); 
 }
 
 function renderAdminQueue() {
@@ -178,7 +157,7 @@ function renderAdminQueue() {
     tbody.innerHTML = "";
 
     if (pendingSubmissions.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">No pending submissions left in the review pipeline.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#777;">No pending submissions.</td></tr>`;
         return;
     }
 
@@ -211,14 +190,14 @@ function handleQueue(id, action) {
                 days: []
             });
             renderExploreCards();
-            alert(`"${sub.title}" successfully approved and deployed live to public listing rows!`);
+            alert(`"${sub.title}" successfully approved and deployed live!`);
         }
     }
     pendingSubmissions = pendingSubmissions.filter(s => s.id !== id);
     renderAdminQueue();
 }
 
-// 5. SECURITY SESSION SYSTEM CONTROLLERS
+// 5. BACKEND PIPELINE LOGIN BRIDGE
 function openLoginModal() {
     document.getElementById("login-modal").style.display = "flex";
 }
@@ -233,25 +212,39 @@ function attemptLogin() {
     const passInput = document.getElementById("login-password").value;
     const errorMsg = document.getElementById("login-error-msg");
 
-    if (emailInput === "admin@gmail.com" && passInput === "adminpassword123") {
-        isAdminLoggedIn = true;
-        document.getElementById("nav-admin-link").style.display = "inline-block";
-        document.getElementById("admin-badge").style.display = "inline-block";
-        document.getElementById("login-trigger-btn").style.display = "none";
-        closeLoginModal();
-        switchPage('admin-portal');
-    } else {
-        errorMsg.innerText = "Invalid credentials. Please match specified admin data settings.";
-    }
+    // Connect directly to our backend Express endpoint API
+    fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailInput, password: passInput })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            isAdminLoggedIn = true;
+            document.getElementById("nav-admin-link").style.display = "inline-block";
+            document.getElementById("admin-badge").style.display = "inline-block";
+            document.getElementById("login-trigger-btn").style.display = "none";
+            closeLoginModal();
+            switchPage('admin-portal');
+        } else {
+            errorMsg.innerText = data.message;
+        }
+    })
+    .catch(err => {
+        errorMsg.innerText = "Backend Connection Server Error.";
+    });
 }
 
 // 6. TOOL INTERACTIONS INTERFACE LOOPS
 function openContributionAlert() {
-    alert("Contribution section active. Logging into admin@gmail.com grants full access to the review mechanics pipeline.");
+    alert("Contribution section active. Log in to the Admin Portal to manage submissions.");
 }
 
 function removeStop(nodeId, deductionsValue) {
-    document.getElementById(nodeId).remove();
+    const targetElement = document.getElementById(nodeId);
+    if(targetElement) targetElement.remove();
+    
     const activePrice = 450 - deductionsValue;
     document.getElementById("custom-price-tag").innerText = `$${activePrice}`;
     document.getElementById("variance-tag").innerText = `-$${deductionsValue}`;
