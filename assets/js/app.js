@@ -38,11 +38,18 @@ document.addEventListener("DOMContentLoaded", () => {
     renderAdminQueue();
 });
 
+
 // 3. ROUTER / PAGE VIEW CONTROLLER FUNCTION
 function switchPage(pageId) {
     document.querySelectorAll('.page-view').forEach(view => {
         view.classList.remove('active');
     });
+    
+    // Safety check: Clean up map tracking elements if leaving the detail view
+    if (pageId !== 'detail' && webMapInstance !== null) {
+        webMapInstance.remove();
+        webMapInstance = null;
+    }
     
     const targetView = document.getElementById(`view-${pageId}`);
     if (targetView) {
@@ -50,6 +57,7 @@ function switchPage(pageId) {
     }
     window.scrollTo(0,0);
 }
+
 
 // 4. RENDERING DRIVERS
 function renderExploreCards() {
@@ -212,29 +220,22 @@ function attemptLogin() {
     const passInput = document.getElementById("login-password").value;
     const errorMsg = document.getElementById("login-error-msg");
 
-    // Connect directly to our backend Express endpoint API
-    fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: emailInput, password: passInput })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            isAdminLoggedIn = true;
-            document.getElementById("nav-admin-link").style.display = "inline-block";
-            document.getElementById("admin-badge").style.display = "inline-block";
-            document.getElementById("login-trigger-btn").style.display = "none";
-            closeLoginModal();
-            switchPage('admin-portal');
-        } else {
-            errorMsg.innerText = data.message;
-        }
-    })
-    .catch(err => {
-        errorMsg.innerText = "Backend Connection Server Error.";
-    });
+    // STATIC BACKEND EMULATION BYPASS FOR GITHUB PAGES
+    if (emailInput === "admin@gmail.com" && passInput === "adminpassword123") {
+        isAdminLoggedIn = true;
+        
+        // Expose admin UI modules instantly
+        document.getElementById("nav-admin-link").style.display = "inline-block";
+        document.getElementById("admin-badge").style.display = "inline-block";
+        document.getElementById("login-trigger-btn").style.display = "none";
+        
+        closeLoginModal();
+        switchPage('admin-portal');
+    } else {
+        errorMsg.innerText = "Invalid credentials. Access Denied.";
+    }
 }
+
 
 // 6. TOOL INTERACTIONS INTERFACE LOOPS
 function openContributionAlert() {
