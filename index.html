@@ -12,13 +12,13 @@
 <body>
 
     <div class="mobile-container">
-        <!-- TOP UTILITY BAR (Shared across all pages) -->
+        <!-- TOP UTILITY BAR (Navigates to dedicated pages) -->
         <header class="top-nav">
-            <a href="#contact" onclick="openInfoModal('contact')">Contact</a>
+            <a href="#" onclick="switchView('contact-view'); return false;">Contact</a>
             <span class="divider">|</span>
-            <a href="#privacy" onclick="openInfoModal('privacy')">Privacy</a>
+            <a href="#" onclick="switchView('privacy-view'); return false;">Privacy</a>
             <span class="divider">|</span>
-            <a href="#terms" onclick="openInfoModal('terms')">Terms &amp; Policy</a>
+            <a href="#" onclick="switchView('terms-view'); return false;">Terms &amp; Policy</a>
         </header>
 
         <!-- =========================================================
@@ -50,7 +50,7 @@
                     <a href="#explore-section" class="pill-btn">
                         <span class="icon-pin">📍</span> EXPLORE PLACES
                     </a>
-                    <a href="#contribute-section" class="pill-btn">
+                    <a href="#" onclick="switchView('contribute-view'); return false;" class="pill-btn">
                         <span class="icon-sign">🪧</span> CONTRIBUTE
                     </a>
                 </div>
@@ -78,44 +78,28 @@
                 </div>
             </section>
 
-            <!-- Contribute Section (Detailed Explanation + Email Verification Flow) -->
+            <!-- Contribute Teaser Section -->
             <section id="contribute-section" class="contribute-block">
                 <h2 class="section-heading">CONTRIBUTE</h2>
-                <div class="contribute-card">
-                    <p class="contribute-prompt">SHARE YOUR OFFBEAT DISCOVERIES</p>
-                    <p class="body-text">
-                        Have you explored a hidden trail, quiet beach, or budget-friendly route that deserves to be shared? Help fellow travelers escape tourist crowds by contributing your own itinerary and map details.
-                    </p>
-                    <div class="contribute-steps">
-                        <p><strong>How it works:</strong></p>
-                        <p>1. Send us your place name, route notes, photos, and Google Maps link via email.</p>
-                        <p>2. We verify the route details and publish it directly on Offbeat with credit to you.</p>
-                    </div>
-                    <div class="email-box">
-                        <span>Send details to:</span>
-                        <a href="mailto:offbeattravels33@gmail.com">offbeattravels33@gmail.com</a>
-                    </div>
-                    <button class="cta-gold-btn" onclick="window.location.href='mailto:offbeattravels33@://gmail.com:'">
-                        Email Your Place Details
-                    </button>
-                </div>
+                <p class="contribute-prompt">ARE YOU READY TO CONTRIBUTE</p>
+                <button class="cta-gold-btn" onclick="switchView('contribute-view')">
+                    Click Here
+                </button>
             </section>
         </main>
 
         <!-- =========================================================
-             VIEW 2: PLACE DETAIL PAGE (Opens when a picture is clicked)
+             VIEW 2: PLACE DETAIL PAGE
              ========================================================= -->
         <main id="detail-view" class="view">
-            <button class="back-link" onclick="goBack()">← Back</button>
+            <button class="back-link" onclick="switchView('main-view')">← Back</button>
             
             <h1 id="detail-place-name" class="detail-title">Place Name</h1>
 
-            <!-- Cover Page Image -->
             <div class="image-frame cover-frame">
                 <img id="detail-cover-img" src="" alt="Cover Page">
             </div>
 
-            <!-- About Place Section -->
             <section class="content-block">
                 <h2 class="section-heading">ABOUT</h2>
                 <p id="detail-about-text" class="body-text">
@@ -123,7 +107,6 @@
                 </p>
             </section>
 
-            <!-- Itinerary Image Section (Clickable Google Drive PDF Link) -->
             <section class="content-block">
                 <h2 class="section-heading">ITINERARY</h2>
                 <a id="detail-itinerary-link" href="#" target="_blank" rel="noopener noreferrer" class="clickable-media-card">
@@ -137,7 +120,6 @@
                 </p>
             </section>
 
-            <!-- Map Details Photo Section (Clickable Google Maps List Link) -->
             <section class="content-block">
                 <h2 class="section-heading">MAP DETAILS</h2>
                 <a id="detail-map-link" href="#" target="_blank" rel="noopener noreferrer" class="clickable-media-card">
@@ -151,32 +133,62 @@
                 </p>
             </section>
 
-            <!-- Photo Gallery Section -->
             <section class="content-block">
                 <h2 class="section-heading">GALLERY</h2>
                 <p class="gallery-hint">Tap any photo to view full screen</p>
-                <div class="gallery-grid" id="detail-gallery-grid">
-                    <!-- Gallery images (image1.png, image2.png...) load automatically -->
-                </div>
+                <div class="gallery-grid" id="detail-gallery-grid"></div>
             </section>
         </main>
-    </div>
 
-    <!-- MODAL POPUP FOR CONTACT, PRIVACY & TERMS -->
-    <div id="info-modal" class="modal-backdrop" onclick="closeInfoModal()">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <h3 id="modal-title">Policy</h3>
-            <div id="modal-body" class="modal-content-area"></div>
-            <button class="cta-gold-btn" style="margin-top: 18px; padding: 10px;" onclick="closeInfoModal()">Close</button>
-        </div>
-    </div>
+        <!-- =========================================================
+             VIEW 3: DEDICATED CONTRIBUTE PAGE
+             ========================================================= -->
+        <main id="contribute-view" class="view">
+            <button class="back-link" onclick="switchView('main-view')">← Back</button>
+            <h1 class="detail-title">Contribute a Place</h1>
 
-    <!-- FULLSCREEN GALLERY LIGHTBOX OVERLAY -->
-    <div id="lightbox-modal" class="lightbox-backdrop" onclick="closeLightbox()">
-        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-        <img id="lightbox-img" src="" alt="Fullscreen View" onclick="event.stopPropagation()">
-    </div>
+            <div class="contribute-card">
+                <p class="contribute-prompt">WHY CONTRIBUTE TO OFFBEAT?</p>
+                <p class="body-text">
+                    Popular travel sites send everyone to the same crowded spots. By sharing your offbeat discoveries, hidden viewpoints, and budget-friendly routes, you help fellow travelers experience authentic places while keeping local travel knowledge free for everyone.
+                </p>
 
-    <script src="assets/js/app.js"></script>
-</body>
-</html>
+                <div class="contribute-steps">
+                    <p style="margin-bottom: 6px;"><strong>How to Submit Your Route:</strong></p>
+                    <p><strong>1. Prepare Your Details:</strong> Gather the place name, a short description, your day-by-day itinerary notes, a Google Maps link, and 3–4 clear photos.</p>
+                    <p style="margin-top: 6px;"><strong>2. Send via Email:</strong> Email your details to our curation team using the address below.</p>
+                    <p style="margin-top: 6px;"><strong>3. Verification &amp; Publishing:</strong> Once we verify the route details, we will publish your itinerary on Offbeat with full credit to your name.</p>
+                </div>
+
+                <div class="email-box">
+                    <span>Submission Email Address:</span>
+                    <a href="mailto:offbeattravels33@gmail.com">offbeattravels33@gmail.com</a>
+                </div>
+
+                <button class="cta-gold-btn" onclick="window.location.href='mailto:offbeattravels33@://gmail.com:'">
+                    Open Pre-Filled Email Template
+                </button>
+            </div>
+        </main>
+
+        <!-- =========================================================
+             VIEW 4: DEDICATED CONTACT PAGE
+             ========================================================= -->
+        <main id="contact-view" class="view">
+            <button class="back-link" onclick="switchView('main-view')">← Back</button>
+            <h1 class="detail-title">Contact Us</h1>
+
+            <div class="contribute-card">
+                <p class="contribute-prompt">GET IN TOUCH</p>
+                <p class="body-text">
+                    Have questions about an itinerary, want to report an outdated route, or interested in collaborating with Offbeat? Reach out directly to our team.
+                </p>
+
+                <div class="contribute-steps">
+                    <p><strong>Founder &amp; Curator:</strong> Muhammad Shamil OH</p>
+                    <p><strong>Institution:</strong> Mar Athanasius College of Engineering</p>
+                    <p><strong>Response Time:</strong> Within 24–48 hours</p>
+                </div>
+
+                <div class="email-box">
+                    <span>Official Support &amp; Inquiries Email:</span>
