@@ -1,3 +1,9 @@
+---
+
+### 2. `assets/js/app.js` (Updated Page Switcher)
+Replace your entire `assets/js/app.js` with this cleaner version that switches between all 6 dedicated views:
+
+```javascript
 /* =====================================================================
    OFFBEAT PLACE DATA, PAGE ROUTER & FULLSCREEN GALLERY
    ===================================================================== */
