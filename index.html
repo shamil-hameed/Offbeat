@@ -3,246 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offfbeat - Free Travel Routes & Itineraries</title>
-    <!-- Google Fonts for Clean Typography -->
+    <title>OFFBEAT - Your Home for Travelling</title>
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="family">
+    <link href="https://googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- Leaflet Maps CSS Engine -->
-<link rel="stylesheet" href="https://unpkg.com" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-<!-- Leaflet Maps JavaScript Engine -->
-<script src="https://unpkg.com" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
 </head>
 <body>
 
-    <!-- GLOBAL NAVBAR -->
-    <header class="navbar">
-        <div class="logo-area" onclick="switchPage('home')">
-            <span class="logo-icon">▲</span> OFFFBEAT
-        </div>
-      <nav class="nav-links">
-    <a href="#" onclick="switchPage('home')">Home</a>
-    <a href="#" onclick="switchPage('explore')">Explore</a>
-    <a href="#" onclick="switchPage('about')">About Us</a>
-    <a href="#" onclick="switchPage('privacy')">Privacy Policy</a>
-    <a href="#" onclick="switchPage('admin-portal')" id="nav-admin-link" style="display:none;">Admin Portal</a>
-    <button class="btn-login" id="login-trigger-btn" onclick="openLoginModal()">Login</button>
-    <span class="user-badge" id="admin-badge" style="display:none;">Admin Access</span>
-</nav>
-    </header>
+    <div class="mobile-container">
+        <!-- TOP UTILITY BAR (Shared across all pages) -->
+        <header class="top-nav">
+            <a href="#contact" onclick="openInfoModal('contact')">Contact</a>
+            <span class="divider">|</span>
+            <a href="#privacy" onclick="openInfoModal('privacy')">Privacy</a>
+            <span class="divider">|</span>
+            <a href="#terms" onclick="openInfoModal('terms')">Terms &amp; Policy</a>
+        </header>
 
-    <!-- MAIN CONTAINER FOR DYNAMIC VIEWS -->
-    <main id="app-container">
-
-        <!-- A. HOMEPAGE VIEW -->
-        <section id="view-home" class="page-view active">
-            <div class="hero-section">
-                <h1>OFFFBEAT</h1>
-                <p class="hero-desc">Discover hidden travel paths, unique destinations, and curate your own adventures. Escape the crowd and explore the road less traveled.</p>
-                <div class="search-bar-wrapper">
-                    <input type="text" placeholder="Where do you want to go?">
+        <!-- =========================================================
+             VIEW 1: MAIN PAGE
+             ========================================================= -->
+        <main id="main-view" class="view active">
+            <!-- Mini Brand Header -->
+            <div class="brand-mini">
+                <div class="logo-title">
+                    <img src="assets/images/logo.png" alt="Offbeat Logo" class="brand-logo">
+                    <span>OFFBEAT</span>
                 </div>
+                <p class="sub-tagline">YOUR HOME FOR TRAVELLING</p>
             </div>
 
-            <div class="grid-container">
-                <div class="curved-card yellow-accent" onclick="switchPage('explore')">
-                    <h2>EXPLORE PLACES</h2>
-                    <p>Find hidden gems and unique itineraries curated by travel experts completely for free.</p>
-                    <button class="card-btn black">Start Exploring</button>
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="pill-badge">
+                    <span class="dot"></span> Best Itineraries
                 </div>
-                <div class="curved-card" onclick="openContributionAlert()">
-                    <h2>CONTRIBUTE YOUR PATH</h2>
-                    <p>Share your own offbeat adventures. Earn badges, community recognition, and dashboard spots.</p>
-                    <button class="card-btn yellow">Submit Itinerary</button>
-                </div>
-                <div class="curved-card" onclick="switchPage('compare')">
-                    <h2>COMPARE ITINERARIES</h2>
-                    <p>Compare our standard base routes with user submissions and your custom creations side-by-side.</p>
-                    <button class="card-btn black">Launch Comparison Tool</button>
-                </div>
-            </div>
-        </section>
+                <h1 class="hero-title">OFFBEAT</h1>
+                <p class="hero-subtitle">stay connected . enjoy moments</p>
 
-        <!-- B. ITINERARY LISTING VIEW -->
-        <section id="view-explore" class="page-view">
-            <h2 class="section-title">Explore Popular Itineraries</h2>
-            <div class="explore-layout">
-                <div class="itinerary-list" id="explore-cards-target">
-                    <!-- Cards will be populated by JavaScript -->
+                <!-- 3 Action Pills -->
+                <div class="action-pills">
+                    <a href="#about-section" class="pill-btn">
+                        <span class="icon-box">A</span> ABOUT
+                    </a>
+                    <a href="#explore-section" class="pill-btn">
+                        <span class="icon-pin">📍</span> EXPLORE PLACES
+                    </a>
+                    <a href="#contribute-section" class="pill-btn">
+                        <span class="icon-sign">🪧</span> CONTRIBUTE
+                    </a>
                 </div>
-            </div>
-        </section>
+            </section>
 
-      <!-- C. ITINERARY DETAIL & EXPLAINED TIMELINE VIEW WITH MAP -->
-<section id="view-detail" class="page-view">
-    <button class="back-btn" onclick="switchPage('explore')">← Back to Itineraries</button>
-    <h2 id="detail-title" class="itinerary-main-title">Selected Route Title</h2>
-    
-    <div class="detail-workspace" style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-        <!-- Timeline column -->
-        <div class="timeline-column">
-            <h3>Route Flow & Timeline</h3>
-            <div class="vertical-timeline" id="timeline-target">
-                <!-- Dynamic dotted timeline goes here -->
-            </div>
-        </div>
-        
-        <!-- Live Map Column -->
-        <div class="map-column" style="position: sticky; top: 100px; height: 500px;">
-            <h3>Interactive Route Map</h3>
-            <div id="map" style="width: 100%; height: 100%; border: 2px solid #000000; border-radius: 12px; margin-top: 20px;"></div>
-        </div>
-    </div>
-</section>
+            <!-- About Section -->
+            <section id="about-section" class="content-block">
+                <h2 class="section-heading">ABOUT</h2>
+                <p class="body-text">
+                    Welcome to Offbeat, created by Muhammad Shamil OH (Student at Mar Athanasius College of Engineering). We help modern travelers discover uncrowded destinations, free route guides, and authentic local experiences without breaking the bank.
+                </p>
+            </section>
 
-
-        <!-- D. COMPARE & CUSTOMIZE DASHBOARD -->
-        <section id="view-compare" class="page-view">
-            <h2 class="section-title">Compare & Customize Canvas</h2>
-            <div class="comparison-bar">
-                <div class="metric-pill">Base Price: <strong>$450</strong></div>
-                <div class="metric-pill yellow">Your Custom Price: <strong id="custom-price-tag">$450</strong></div>
-                <div class="metric-pill">Variance: <strong id="variance-tag">$0</strong></div>
-            </div>
-            <div class="split-canvas">
-                <div class="canvas-panel standard">
-                    <h3>Base Itinerary Template (Locked)</h3>
-                    <div class="canvas-item">Stop 1: Arashiyama Bamboo Grove</div>
-                    <div class="canvas-item">Stop 2: Otagi Nenbutsu-ji</div>
-                    <div class="canvas-item">Stop 3: Kinkaku-ji</div>
+            <!-- Explore Section -->
+            <section id="explore-section" class="content-block">
+                <h2 class="section-heading">EXPLORE</h2>
+                <div class="explore-grid" id="places-grid">
+                    <!-- Place cards load automatically from app.js -->
                 </div>
-                <div class="canvas-panel custom-edit">
-                    <h3>Your Custom Modifications</h3>
-                    <div id="custom-sortable-list">
-                        <div class="canvas-item editable-node" id="node-1">
-                            Stop 1: Arashiyama Bamboo Grove 
-                            <button class="remove-node-btn" onclick="removeStop('node-1', 120)">✕ Delete</button>
-                        </div>
-                        <div class="canvas-item editable-node" id="node-2">
-                            Stop 2: Otagi Nenbutsu-ji
-                            <button class="remove-node-btn" onclick="removeStop('node-2', 80)">✕ Delete</button>
-                        </div>
+                <div class="pagination-dots">
+                    <span class="p-dot active"></span>
+                    <span class="p-dot"></span>
+                    <span class="p-dot"></span>
+                    <span class="p-dot"></span>
+                </div>
+            </section>
+
+            <!-- Contribute Section (Detailed Explanation + Email Verification Flow) -->
+            <section id="contribute-section" class="contribute-block">
+                <h2 class="section-heading">CONTRIBUTE</h2>
+                <div class="contribute-card">
+                    <p class="contribute-prompt">SHARE YOUR OFFBEAT DISCOVERIES</p>
+                    <p class="body-text">
+                        Have you explored a hidden trail, quiet beach, or budget-friendly route that deserves to be shared? Help fellow travelers escape tourist crowds by contributing your own itinerary and map details.
+                    </p>
+                    <div class="contribute-steps">
+                        <p><strong>How it works:</strong></p>
+                        <p>1. Send us your place name, route notes, photos, and Google Maps link via email.</p>
+                        <p>2. We verify the route details and publish it directly on Offbeat with credit to you.</p>
                     </div>
-                    <button class="action-btn-accent" onclick="resetComparison()">Reset Custom Canvas</button>
+                    <div class="email-box">
+                        <span>Send details to:</span>
+                        <a href="mailto:offbeattravels33@gmail.com">offbeattravels33@gmail.com</a>
+                    </div>
+                    <button class="cta-gold-btn" onclick="window.location.href='mailto:offbeattravels33@://gmail.com:'">
+                        Email Your Place Details
+                    </button>
                 </div>
-            </div>
-        </section>
+            </section>
+        </main>
 
-        <!-- E. REDESIGNED ADMIN DASHBOARD HUB -->
-        <section id="view-admin-portal" class="page-view">
-            <h2 class="section-title">Admin Management Workspace</h2>
-            <div class="grid-container">
-                <div class="curved-card" onclick="alert('Redirecting to: Add/Edit Places Workspace Screen')">
-                    <div class="card-icon">📍</div>
-                    <h3>MY CREATIONS</h3>
-                    <p>View, manage, and edit itineraries you have personally introduced into the system.</p>
-                </div>
-                <div class="curved-card yellow-accent" onclick="switchPage('admin-queue')">
-                    <div class="card-icon">📥</div>
-                    <h3>USER CONTRIBUTIONS</h3>
-                    <p>Review path submissions filed by community members. Approve or deny pending items.</p>
-                </div>
-                <div class="curved-card" onclick="alert('Redirecting to Hotel Matrix Management Configuration')">
-                    <div class="card-icon">🏨</div>
-                    <h3>HOTEL DATABASE</h3>
-                    <p>Configure pricing tables and parameters for low, mid-range, and luxury stay assets.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- F. ADMIN USER CONTRIBUTION SUBMISSION QUEUE -->
-        <section id="view-admin-queue" class="page-view">
-            <button class="back-btn" onclick="switchPage('admin-portal')">← Back to Dashboard Hub</button>
-            <h2 class="section-title">Pending User Submissions for Review</h2>
-            <div class="table-wrapper">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Submission Date</th>
-                            <th>User Profile</th>
-                            <th>Itinerary Title</th>
-                            <th>Region Target</th>
-                            <th>Status Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="queue-table-body">
-                        <!-- Filled dynamically with approve/reject handlers -->
-                    </tbody>
-                </table>
-            </div>
-        </section>
-<!-- G. ABOUT US & CONTACT FRAMEWORK VIEW -->
-<section id="view-about" class="page-view">
-    <h2 class="section-title">About Offfbeat</h2>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 20px;">
-        
-        <!-- Author Profile -->
-        <div class="curved-card yellow-accent">
-            <div style="font-size: 48px; margin-bottom: 10px;">👨‍💻</div>
-            <h2>Meet the Author</h2>
-            <p style="font-size: 16px; font-weight: 700; margin-bottom: 5px; color: #000;">Muhammad Shamil OH</p>
-            <p style="font-size: 14px; margin-bottom: 15px; color: #444;">Student at Mar Athanasius College of Engineering</p>
-            <p>Passionate about engineering seamless, open-source travel curation frameworks that help modern adventurers discover rare paths without breaking the bank.</p>
-        </div>
-
-        <!-- Contact Framework -->
-        <div class="curved-card" style="cursor: default;">
-            <div style="font-size: 48px; margin-bottom: 10px;">📥</div>
-            <h2>Get In Touch</h2>
-            <p>Have any questions, feature suggestions, or partnerships in mind? Drop a message directly into our workspace queue.</p>
+        <!-- =========================================================
+             VIEW 2: PLACE DETAIL PAGE (Opens when a picture is clicked)
+             ========================================================= -->
+        <main id="detail-view" class="view">
+            <button class="back-link" onclick="goBack()">← Back</button>
             
-            <div style="margin-top: 20px; padding: 15px; border: 2px dashed #000; border-radius: 8px; background: #fafafa;">
-                <span style="font-weight: 700; font-size: 12px; text-transform: uppercase; color: #666; display: block; margin-bottom: 5px;">Primary Support Email</span>
-                <a href="mailto:offbeattravels33@gmail.com" style="color: #000; font-weight: 700; font-size: 16px; text-decoration: underline;">offbeattravels33@gmail.com</a>
-            </div>
-        </div>
+            <h1 id="detail-place-name" class="detail-title">Place Name</h1>
 
+            <!-- Cover Page Image -->
+            <div class="image-frame cover-frame">
+                <img id="detail-cover-img" src="" alt="Cover Page">
+            </div>
+
+            <!-- About Place Section -->
+            <section class="content-block">
+                <h2 class="section-heading">ABOUT</h2>
+                <p id="detail-about-text" class="body-text">
+                    Destination overview loads here.
+                </p>
+            </section>
+
+            <!-- Itinerary Image Section (Clickable Google Drive PDF Link) -->
+            <section class="content-block">
+                <h2 class="section-heading">ITINERARY</h2>
+                <a id="detail-itinerary-link" href="#" target="_blank" rel="noopener noreferrer" class="clickable-media-card">
+                    <div class="image-frame itinerary-frame">
+                        <img id="detail-itinerary-img" src="" alt="Itinerary Graphic">
+                        <span class="link-badge">📄 Tap to open PDF Itinerary</span>
+                    </div>
+                </a>
+                <p id="detail-itinerary-caption" class="caption-text">
+                    Tap the image above to open the PDF itinerary.
+                </p>
+            </section>
+
+            <!-- Map Details Photo Section (Clickable Google Maps List Link) -->
+            <section class="content-block">
+                <h2 class="section-heading">MAP DETAILS</h2>
+                <a id="detail-map-link" href="#" target="_blank" rel="noopener noreferrer" class="clickable-media-card">
+                    <div class="image-frame map-frame">
+                        <img id="detail-map-img" src="" alt="Map Details Photo">
+                        <span class="link-badge">📍 Tap to open Google Maps List</span>
+                    </div>
+                </a>
+                <p id="detail-map-caption" class="caption-text">
+                    Tap the map photo above to open the Google Maps location list.
+                </p>
+            </section>
+
+            <!-- Photo Gallery Section -->
+            <section class="content-block">
+                <h2 class="section-heading">GALLERY</h2>
+                <p class="gallery-hint">Tap any photo to view full screen</p>
+                <div class="gallery-grid" id="detail-gallery-grid">
+                    <!-- Gallery images (image1.png, image2.png...) load automatically -->
+                </div>
+            </section>
+        </main>
     </div>
-</section>
 
-<!-- H. DEDICATED PRIVACY POLICY VIEW -->
-<section id="view-privacy" class="page-view">
-    <h2 class="section-title">Privacy Policy</h2>
-    <div style="border: 2px solid #000; border-radius: 12px; padding: 30px; background: #ffffff; line-height: 1.6;">
-        <p style="font-size: 12px; color: #666; margin-bottom: 20px;"><strong>Last Updated:</strong> November 2026</p>
-        
-        <h3 style="margin: 20px 0 10px 0; font-weight: 800;">1. Information Gathering Baseline</h3>
-        <p style="margin-bottom: 15px; color: #333;">Offfbeat operates as a free open-source itinerary indexing resource. We explicitly do not track personal identifying metrics or sell biometric vectors to external programmatic ad layers.</p>
-
-        <h3 style="margin: 20px 0 10px 0; font-weight: 800;">2. Custom Canvas Persistence Data</h3>
-        <p style="margin-bottom: 15px; color: #333;">Any custom itinerary built via the Compare &amp; Customize screen relies entirely on local memory allocations inside your own client browser wrapper. No travel parameters are parsed onto third-party analytical pipelines.</p>
-
-        <h3 style="margin: 20px 0 10px 0; font-weight: 800;">3. Public Map Integrations</h3>
-        <p style="margin-bottom: 15px; color: #333;">Geospatial route visualizations utilize Leaflet alongside OpenStreetMap CDN scripts. These modules serve basic lightweight geographic display functions and do not harvest background persistent user coordinates data layers.</p>
-
-        <h3 style="margin: 20px 0 10px 0; font-weight: 800;">4. Contact &amp; Governance Queries</h3>
-        <p style="color: #333;">For data validation requests regarding community-contributed routes or administrative concerns, connect immediately to our engineering team mailbox at <strong>offbeattravels33@gmail.com</strong>.</p>
-    </div>
-</section>
-
-    </main>
-
-    <!-- LOGIN MODAL DIALOGUE WINDOW -->
-    <div class="modal-overlay" id="login-modal">
-        <div class="modal-card">
-            <h3>Admin Portal Authentication</h3>
-            <p style="font-size: 12px; color: #666; margin-bottom: 15px;">Use hardcoded credentials: <strong>admin@gmail.com</strong> / <strong>adminpassword123</strong></p>
-            <div class="input-group">
-                <label>Gmail Address</label>
-                <input type="email" id="login-email" placeholder="name@example.com">
-            </div>
-            <div class="input-group">
-                <label>Password</label>
-                <input type="password" id="login-password" placeholder="••••••••">
-            </div>
-            <div id="login-error-msg" class="error-text"></div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeLoginModal()">Cancel</button>
-                <button class="btn-submit" onclick="attemptLogin()">Log In</button>
-            </div>
+    <!-- MODAL POPUP FOR CONTACT, PRIVACY & TERMS -->
+    <div id="info-modal" class="modal-backdrop" onclick="closeInfoModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h3 id="modal-title">Policy</h3>
+            <div id="modal-body" class="modal-content-area"></div>
+            <button class="cta-gold-btn" style="margin-top: 18px; padding: 10px;" onclick="closeInfoModal()">Close</button>
         </div>
+    </div>
+
+    <!-- FULLSCREEN GALLERY LIGHTBOX OVERLAY -->
+    <div id="lightbox-modal" class="lightbox-backdrop" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+        <img id="lightbox-img" src="" alt="Fullscreen View" onclick="event.stopPropagation()">
     </div>
 
     <script src="assets/js/app.js"></script>
